@@ -7,6 +7,18 @@
 //          : to count from 0 to 255                            //
 //****************************************************************
 
+#include "pitches.h"
+
+// notes in the melody:
+int melody[] = {
+  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4, NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+};
+
+// note durations: 4 = quarter note, 8 = eighth note, etc.:
+int noteDurations[] = {
+  4, 8, 8, 4, 4, 4, 4, 4
+};
+
 //Pin connected to ST_CP of 74HC595
 int latchPin = 8;
 //Pin connected to SH_CP of 74HC595
@@ -84,6 +96,7 @@ void loop() {
     //return the latch pin high to signal chip that it 
     //no longer needs to listen for information
     digitalWrite(latchPin, 1);
+    tone(7, melody[j], 300);
     delay(300);
   }
 }
