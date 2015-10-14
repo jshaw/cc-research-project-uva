@@ -11,12 +11,7 @@
 
 // notes in the melody:
 int melody[] = {
-  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4, NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
-};
-
-// note durations: 4 = quarter note, 8 = eighth note, etc.:
-int noteDurations[] = {
-  4, 8, 8, 4, 4, 4, 4, 4
+  NOTE_B0, NOTE_C1, NOTE_CS1, NOTE_D1, NOTE_DS1, NOTE_E1, NOTE_F1, NOTE_FS1, NOTE_FS1, NOTE_F1, NOTE_E1, NOTE_DS1, NOTE_D1, NOTE_CS1, NOTE_C1, NOTE_B0
 };
 
 //Pin connected to ST_CP of 74HC595
