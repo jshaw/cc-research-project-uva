@@ -9,6 +9,22 @@
 
 #include "pitches.h"
 
+
+//Adding Mozzi Includes
+#include <MozziGuts.h>
+#include <Oscil.h> // oscillator template
+#include <tables/sin2048_int8.h> // sine table for oscillator
+
+// use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
+Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
+
+const char INPUT_PIN = 0; // set the input for the knob to analog pin 0
+
+// to convey the volume level from updateControl() to updateAudio()
+byte volume;
+
+//Ending Mozzi setup
+
 // notes in the melody:
 int melody[] = {
   NOTE_B0, NOTE_C1, NOTE_CS1, NOTE_D1, NOTE_DS1, NOTE_E1, NOTE_F1, NOTE_FS1, NOTE_FS1, NOTE_F1, NOTE_E1, NOTE_DS1, NOTE_D1, NOTE_CS1, NOTE_C1, NOTE_B0
@@ -73,12 +89,23 @@ void setup() {
 
   //function that blinks all the LEDs
   //gets passed the number of blinks and the pause time
-  blinkAll_2Bytes(2,500); 
+  blinkAll_2Bytes(2,500);
+
+  //  Mozzi
+//  aSin.setFreq(440);
+  aSin.setFreq(2093);
+
+  startMozzi(); // :))
 }
 
 void loop() {
 
+  // TODO: There's something here that's weird that interferes with the Mozzi audio loops
+  //  If this for loop is commented out we are ok.
+  // As well, if we comment out the shiftOut function call it also works ok.
 
+  // Also might have blown out a pin on the chip
+  // TODO: END
   for (int j = 0; j < 15; j++) {
     //load the light sequence you want from array
     dataRED = dataArrayRED[j];
@@ -91,12 +118,12 @@ void loop() {
     //return the latch pin high to signal chip that it 
     //no longer needs to listen for information
     digitalWrite(latchPin, 1);
-    tone(7, melody[j], 300);
-    delay(300);
+////    tone(7, melody[j], 300);
+//    delay(300);
   }
+
+  audioHook(); // required here
 }
-
-
 
 // the heart of the program
 void shiftOut(int myDataPin, int myClockPin, byte myDataOut) {
@@ -170,4 +197,21 @@ void blinkAll_2Bytes(int n, int d) {
   }
 }
 
+
+//Mozzi Functions
+void updateControl(){
+  // read the variable resistor for volume
+  int sensor_value = mozziAnalogRead(INPUT_PIN); // value is 0-1023
+  
+  // map it to an 8 bit range for efficient calculations in updateAudio
+  volume = map(sensor_value, 0, 1023, 0, 255);  
+  
+  // print the value to the Serial monitor for debugging
+  Serial.print("volume = ");
+  Serial.println((int)volume);
+}
+
+int updateAudio(){
+  return ((int)aSin.next() * volume)>>8; // shift back into range after multiplying by 8 bit value
+}
 
