@@ -39,8 +39,12 @@ int dataPin = 11;
 
 //holders for infromation you're going to pass to shifting function
 byte dataRED;
+byte dataORANGE;
+byte dataYELLOW;
 byte dataGREEN;
 byte dataArrayRED[15];
+byte dataArrayORANGE[15];
+byte dataArrayYELLOW[15];
 byte dataArrayGREEN[15];
 
 void setup() {
@@ -69,6 +73,25 @@ void setup() {
 
   //Arduino doesn't seem to have a way to write binary straight into the code 
   //so these values are in HEX.  Decimal would have been fine, too. 
+  dataArrayORANGE[0] = 0xFF; //11111111
+  dataArrayORANGE[1] = 0x7F; //01111111
+  dataArrayORANGE[2] = 0x3F; //00111111
+  dataArrayORANGE[3] = 0x1F; //00011111
+  dataArrayORANGE[4] = 0x0F; //00001111
+  dataArrayORANGE[5] = 0x07; //00000111
+  dataArrayORANGE[6] = 0x03; //00000011
+  dataArrayORANGE[7] = 0x01; //00000001
+  dataArrayORANGE[8] = 0x00; //00000000
+  dataArrayORANGE[9] = 0x01; //00000001
+  dataArrayORANGE[10] = 0x03; //00000011
+  dataArrayORANGE[11] = 0x07; //00000111
+  dataArrayORANGE[12] = 0x0F; //00001111
+  dataArrayORANGE[13] = 0x1F; //00011111
+  dataArrayORANGE[14] = 0x3F; //00111111
+  dataArrayORANGE[15] = 0x7F; //01111111
+
+  //Arduino doesn't seem to have a way to write binary straight into the code 
+  //so these values are in HEX.  Decimal would have been fine, too. 
   dataArrayGREEN[0] = 0xFF; //11111111
   dataArrayGREEN[1] = 0x7F; //01111111
   dataArrayGREEN[2] = 0x3F; //00111111
@@ -85,7 +108,25 @@ void setup() {
   dataArrayGREEN[13] = 0x1F; //00011111
   dataArrayGREEN[14] = 0x3F; //00111111
   dataArrayGREEN[15] = 0x7F; //01111111
-  
+
+  //Arduino doesn't seem to have a way to write binary straight into the code 
+  //so these values are in HEX.  Decimal would have been fine, too. 
+  dataArrayYELLOW[0] = 0xFF; //11111111
+  dataArrayYELLOW[1] = 0x7F; //01111111
+  dataArrayYELLOW[2] = 0x3F; //00111111
+  dataArrayYELLOW[3] = 0x1F; //00011111
+  dataArrayYELLOW[4] = 0x0F; //00001111
+  dataArrayYELLOW[5] = 0x07; //00000111
+  dataArrayYELLOW[6] = 0x03; //00000011
+  dataArrayYELLOW[7] = 0x01; //00000001
+  dataArrayYELLOW[8] = 0x00; //00000000
+  dataArrayYELLOW[9] = 0x01; //00000001
+  dataArrayYELLOW[10] = 0x03; //00000011
+  dataArrayYELLOW[11] = 0x07; //00000111
+  dataArrayYELLOW[12] = 0x0F; //00001111
+  dataArrayYELLOW[13] = 0x1F; //00011111
+  dataArrayYELLOW[14] = 0x3F; //00111111
+  dataArrayYELLOW[15] = 0x7F; //01111111
 
   //function that blinks all the LEDs
   //gets passed the number of blinks and the pause time
@@ -109,11 +150,15 @@ void loop() {
   for (int j = 0; j < 15; j++) {
     //load the light sequence you want from array
     dataRED = dataArrayRED[j];
+    dataORANGE = dataArrayORANGE[j];
+    dataYELLOW = dataArrayYELLOW[j];
     dataGREEN = dataArrayGREEN[j];
     //ground latchPin and hold low for as long as you are transmitting
     digitalWrite(latchPin, 0);
     //move 'em out
-    shiftOut(dataPin, clockPin, dataGREEN);   
+    shiftOut(dataPin, clockPin, dataGREEN);
+    shiftOut(dataPin, clockPin, dataYELLOW);
+    shiftOut(dataPin, clockPin, dataORANGE);
     shiftOut(dataPin, clockPin, dataRED);
     //return the latch pin high to signal chip that it 
     //no longer needs to listen for information
