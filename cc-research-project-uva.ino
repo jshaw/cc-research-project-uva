@@ -10,18 +10,18 @@
 #include "pitches.h"
 
 
-//Adding Mozzi Includes
-#include <MozziGuts.h>
-#include <Oscil.h> // oscillator template
-#include <tables/sin2048_int8.h> // sine table for oscillator
-
-// use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
-Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
-
-const char INPUT_PIN = 0; // set the input for the knob to analog pin 0
-
-// to convey the volume level from updateControl() to updateAudio()
-byte volume;
+////Adding Mozzi Includes
+//#include <MozziGuts.h>
+//#include <Oscil.h> // oscillator template
+//#include <tables/sin2048_int8.h> // sine table for oscillator
+//
+//// use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
+//Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
+//
+//const char INPUT_PIN = 0; // set the input for the knob to analog pin 0
+//
+//// to convey the volume level from updateControl() to updateAudio()
+//byte volume;
 
 //Ending Mozzi setup
 
@@ -39,6 +39,9 @@ int dataPin = 11;
 
 //holders for infromation you're going to pass to shifting function
 byte dataRED;
+byte dataRED1;
+byte dataRED2;
+byte dataRED3;
 byte dataORANGE;
 byte dataYELLOW;
 byte dataGREEN;
@@ -73,22 +76,22 @@ void setup() {
 
   //Arduino doesn't seem to have a way to write binary straight into the code 
   //so these values are in HEX.  Decimal would have been fine, too. 
-  dataArrayORANGE[0] = 0xFF; //11111111
-  dataArrayORANGE[1] = 0x7F; //01111111
-  dataArrayORANGE[2] = 0x3F; //00111111
-  dataArrayORANGE[3] = 0x1F; //00011111
-  dataArrayORANGE[4] = 0x0F; //00001111
-  dataArrayORANGE[5] = 0x07; //00000111
-  dataArrayORANGE[6] = 0x03; //00000011
-  dataArrayORANGE[7] = 0x01; //00000001
-  dataArrayORANGE[8] = 0x00; //00000000
-  dataArrayORANGE[9] = 0x01; //00000001
-  dataArrayORANGE[10] = 0x03; //00000011
-  dataArrayORANGE[11] = 0x07; //00000111
-  dataArrayORANGE[12] = 0x0F; //00001111
-  dataArrayORANGE[13] = 0x1F; //00011111
-  dataArrayORANGE[14] = 0x3F; //00111111
-  dataArrayORANGE[15] = 0x7F; //01111111
+//  dataArrayORANGE[0] = 0xFF; //11111111
+//  dataArrayORANGE[1] = 0x7F; //01111111
+//  dataArrayORANGE[2] = 0x3F; //00111111
+//  dataArrayORANGE[3] = 0x1F; //00011111
+//  dataArrayORANGE[4] = 0x0F; //00001111
+//  dataArrayORANGE[5] = 0x07; //00000111
+//  dataArrayORANGE[6] = 0x03; //00000011
+//  dataArrayORANGE[7] = 0x01; //00000001
+//  dataArrayORANGE[8] = 0x00; //00000000
+//  dataArrayORANGE[9] = 0x01; //00000001
+//  dataArrayORANGE[10] = 0x03; //00000011
+//  dataArrayORANGE[11] = 0x07; //00000111
+//  dataArrayORANGE[12] = 0x0F; //00001111
+//  dataArrayORANGE[13] = 0x1F; //00011111
+//  dataArrayORANGE[14] = 0x3F; //00111111
+//  dataArrayORANGE[15] = 0x7F; //01111111
 
   //Arduino doesn't seem to have a way to write binary straight into the code 
   //so these values are in HEX.  Decimal would have been fine, too. 
@@ -130,13 +133,15 @@ void setup() {
 
   //function that blinks all the LEDs
   //gets passed the number of blinks and the pause time
-  blinkAll_2Bytes(2,500);
+//  blinkAll_2Bytes(2,500);
+  blinkAll_2Bytes(256,100);
+//  blinkAll_2Bytes(260,50);
 
   //  Mozzi
 //  aSin.setFreq(440);
-  aSin.setFreq(2093);
+//  aSin.setFreq(2093);
 
-  startMozzi(); // :))
+//  startMozzi(); // :))
 }
 
 void loop() {
@@ -147,27 +152,54 @@ void loop() {
 
   // Also might have blown out a pin on the chip
   // TODO: END
-  for (int j = 0; j < 15; j++) {
-    //load the light sequence you want from array
-    dataRED = dataArrayRED[j];
-    dataORANGE = dataArrayORANGE[j];
-    dataYELLOW = dataArrayYELLOW[j];
-    dataGREEN = dataArrayGREEN[j];
-    //ground latchPin and hold low for as long as you are transmitting
-    digitalWrite(latchPin, 0);
-    //move 'em out
-    shiftOut(dataPin, clockPin, dataGREEN);
-    shiftOut(dataPin, clockPin, dataYELLOW);
-    shiftOut(dataPin, clockPin, dataORANGE);
-    shiftOut(dataPin, clockPin, dataRED);
-    //return the latch pin high to signal chip that it 
-    //no longer needs to listen for information
-    digitalWrite(latchPin, 1);
-////    tone(7, melody[j], 300);
-//    delay(300);
-  }
 
-  audioHook(); // required here
+//  for (int j = 0; j < 15; j++) {
+//    //load the light sequence you want from array
+//    dataRED = dataArrayRED[j];
+//    dataRED1 = dataArrayRED[j+1];
+//    dataRED2 = dataArrayRED[j+2];
+//    dataRED3 = dataArrayRED[j+3];
+////    dataORANGE = dataArrayORANGE[j];
+////    dataYELLOW = dataArrayYELLOW[j];
+////    dataGREEN = dataArrayGREEN[j];
+//    //ground latchPin and hold low for as long as you are transmitting
+//    digitalWrite(latchPin, 0);
+//    //move 'em out
+////    shiftOut(dataPin, clockPin, dataGREEN);
+////    shiftOut(dataPin, clockPin, dataYELLOW);
+////    shiftOut(dataPin, clockPin, dataORANGE);
+//    shiftOut(dataPin, clockPin, dataRED);
+//    shiftOut(dataPin, clockPin, dataRED1);
+//    shiftOut(dataPin, clockPin, dataRED2);
+//    shiftOut(dataPin, clockPin, dataRED3);
+//    //return the latch pin high to signal chip that it 
+//    //no longer needs to listen for information
+//    digitalWrite(latchPin, 1);
+//////    tone(7, melody[j], 300);
+//    delay(300);
+//  }
+  
+//  for (int j = 0; j < 15; j++) {
+//    //load the light sequence you want from array
+//    dataRED = dataArrayRED[j];
+////    dataORANGE = dataArrayORANGE[j];
+//    dataYELLOW = dataArrayYELLOW[j];
+//    dataGREEN = dataArrayGREEN[j];
+//    //ground latchPin and hold low for as long as you are transmitting
+//    digitalWrite(latchPin, 0);
+//    //move 'em out
+//    shiftOut(dataPin, clockPin, dataGREEN);
+////    shiftOut(dataPin, clockPin, dataYELLOW);
+////    shiftOut(dataPin, clockPin, dataORANGE);
+//    shiftOut(dataPin, clockPin, dataRED);
+//    //return the latch pin high to signal chip that it 
+//    //no longer needs to listen for information
+//    digitalWrite(latchPin, 1);
+//////    tone(7, melody[j], 300);
+//    delay(300);
+//  }
+
+//  audioHook(); // required here
 }
 
 // the heart of the program
@@ -228,35 +260,63 @@ void blinkAll_2Bytes(int n, int d) {
   shiftOut(dataPin, clockPin, 0);
   digitalWrite(latchPin, 1);
   delay(200);
+
+  
+//    digitalWrite(latchPin, 0);
+//    digitalWrite(latchPin, 1);
+//    digitalWrite(latchPin, 2);
+//    shiftOut(dataPin, clockPin, 15);
+//    shiftOut(dataPin, clockPin, 15);
+    
+//    shiftOut(dataPin, clockPin, 240);
+//    shiftOut(dataPin, clockPin, 240);
+////    shiftOut(dataPin, clockPin, 207);
+////    shiftOut(dataPin, clockPin, 207);
+//    digitalWrite(latchPin, 1);
+//    digitalWrite(latchPin, 2);
+//    delay(d);
   for (int x = 0; x < n; x++) {
     digitalWrite(latchPin, 0);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, x);
+    shiftOut(dataPin, clockPin, x);
+    Serial.print("bits: ");
+    Serial.println(x);
     digitalWrite(latchPin, 1);
+    digitalWrite(latchPin, 2);
     delay(d);
-    digitalWrite(latchPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    digitalWrite(latchPin, 1);
-    delay(d);
+//    digitalWrite(latchPin, 0);
+//    shiftOut(dataPin, clockPin, 255);
+//    shiftOut(dataPin, clockPin, 255);
+//    digitalWrite(latchPin, 1);
+//    delay(d);
+//    digitalWrite(latchPin, 0);
+//    shiftOut(dataPin, clockPin, 127);
+//    shiftOut(dataPin, clockPin, 127);
+//    digitalWrite(latchPin, 1);
+//    delay(d);
+//    digitalWrite(latchPin, 0);
+//    shiftOut(dataPin, clockPin, 0);
+//    shiftOut(dataPin, clockPin, 0);
+//    digitalWrite(latchPin, 1);
+//    delay(d);
   }
 }
 
 
 //Mozzi Functions
-void updateControl(){
-  // read the variable resistor for volume
-  int sensor_value = mozziAnalogRead(INPUT_PIN); // value is 0-1023
-  
-  // map it to an 8 bit range for efficient calculations in updateAudio
-  volume = map(sensor_value, 0, 1023, 0, 255);  
-  
-  // print the value to the Serial monitor for debugging
-  Serial.print("volume = ");
-  Serial.println((int)volume);
-}
-
-int updateAudio(){
-  return ((int)aSin.next() * volume)>>8; // shift back into range after multiplying by 8 bit value
-}
+//void updateControl(){
+//  // read the variable resistor for volume
+//  int sensor_value = mozziAnalogRead(INPUT_PIN); // value is 0-1023
+//  
+//  // map it to an 8 bit range for efficient calculations in updateAudio
+//  volume = map(sensor_value, 0, 1023, 0, 255);  
+//  
+//  // print the value to the Serial monitor for debugging
+//  Serial.print("volume = ");
+//  Serial.println((int)volume);
+//}
+//
+//int updateAudio(){
+//  return ((int)aSin.next() * volume)>>8; // shift back into range after multiplying by 8 bit value
+//}
 
