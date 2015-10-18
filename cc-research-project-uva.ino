@@ -30,6 +30,14 @@ int melody[] = {
   NOTE_B0, NOTE_C1, NOTE_CS1, NOTE_D1, NOTE_DS1, NOTE_E1, NOTE_F1, NOTE_FS1, NOTE_FS1, NOTE_F1, NOTE_E1, NOTE_DS1, NOTE_D1, NOTE_CS1, NOTE_C1, NOTE_B0
 };
 
+// Pin A0 Input for the potentiometer
+const int sensorPin = A0;    // pin that the sensor is attached to
+
+// variables:
+int sensorValue = 0;         // the sensor value
+int sensorMin = 1023;        // minimum sensor value
+int sensorMax = 0;           // maximum sensor value
+
 //Pin connected to ST_CP of 74HC595
 int latchPin = 8;
 //Pin connected to SH_CP of 74HC595
@@ -157,6 +165,22 @@ void setup() {
   //gets passed the number of blinks and the pause time
   blinkAll_2Bytes(2,500);
 
+  // calibrate during the first five seconds
+  while (millis() < 5000) {
+    sensorValue = analogRead(sensorPin);
+
+    // record the maximum sensor value
+    if (sensorValue > sensorMax) {
+      sensorMax = sensorValue;
+    }
+
+    // record the minimum sensor value
+    if (sensorValue < sensorMin) {
+      sensorMin = sensorValue;
+    }
+  }
+
+
   //  Mozzi
 //  aSin.setFreq(440);
 //  aSin.setFreq(2093);
@@ -166,11 +190,29 @@ void setup() {
 
 void loop() {
 
+  // read the sensor:
+  sensorValue = analogRead(sensorPin);
+
+  Serial.print("Sensor input: ");
+  Serial.println(sensorValue);
+
+  // apply the calibration to the sensor reading
+  sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 255);
+
+  Serial.print("Sensor Map: ");
+  Serial.println(sensorValue);
+
+  // in case the sensor value is outside the range seen during calibration
+  sensorValue = constrain(sensorValue, 0, 255);
+
+  Serial.print("Sensor constrain: ");
+  Serial.println(sensorValue);
+
+//  delay(1000);
+
   // TODO: There's something here that's weird that interferes with the Mozzi audio loops
   //  If this for loop is commented out we are ok.
   // As well, if we comment out the shiftOut function call it also works ok.
-
-  // Also might have blown out a pin on the chip
   // TODO: END
 
   for (int j = 0; j < 3; j++) {
