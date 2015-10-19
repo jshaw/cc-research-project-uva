@@ -34,9 +34,12 @@ int melody[] = {
 const int sensorPin = A0;    // pin that the sensor is attached to
 
 // variables:
-int sensorValue = 0;         // the sensor value
-int sensorMin = 1023;        // minimum sensor value
-int sensorMax = 0;           // maximum sensor value
+int sensorValue = 0;            // the sensor value
+int sensorValueStep = 0;        // the sensor value
+//int sensorMin = 1023;         // minimum sensor value
+//int sensorMax = 0;            // maximum sensor value
+int sensorMin = 0;              // minimum sensor value
+int sensorMax = 1023;           // maximum sensor value
 
 //Pin connected to ST_CP of 74HC595
 int latchPin = 8;
@@ -44,6 +47,15 @@ int latchPin = 8;
 int clockPin = 12;
 ////Pin connected to DS of 74HC595
 int dataPin = 11;
+
+
+//Bit Shift millis() timer
+// will store last time LED was updated
+unsigned long previousMillis = 0;
+
+// constants won't change :
+// interval at which to blink (milliseconds)
+const long interval = 400;
 
 //holders for infromation you're going to pass to shifting function
 byte dataRED;
@@ -166,19 +178,19 @@ void setup() {
   blinkAll_2Bytes(2,500);
 
   // calibrate during the first five seconds
-  while (millis() < 5000) {
-    sensorValue = analogRead(sensorPin);
-
-    // record the maximum sensor value
-    if (sensorValue > sensorMax) {
-      sensorMax = sensorValue;
-    }
-
-    // record the minimum sensor value
-    if (sensorValue < sensorMin) {
-      sensorMin = sensorValue;
-    }
-  }
+//  while (millis() < 5000) {
+//    sensorValue = analogRead(sensorPin);
+//
+//    // record the maximum sensor value
+//    if (sensorValue > sensorMax) {
+//      sensorMax = sensorValue;
+//    }
+//
+//    // record the minimum sensor value
+//    if (sensorValue < sensorMin) {
+//      sensorMin = sensorValue;
+//    }
+//  }
 
 
   //  Mozzi
@@ -190,23 +202,28 @@ void setup() {
 
 void loop() {
 
+  unsigned long currentMillis = millis();
+
   // read the sensor:
   sensorValue = analogRead(sensorPin);
 
   Serial.print("Sensor input: ");
   Serial.println(sensorValue);
 
-  // apply the calibration to the sensor reading
-  sensorValue = map(sensorValue, sensorMin, sensorMax, 0, 255);
+  sensorValueStep = map(sensorValue, sensorMin, sensorMax, 0, 4);
+  sensorValueStep = constrain(sensorValueStep, 0, 4);
+  
+  Serial.print("Sensor Step: ");
+  Serial.println(sensorValueStep);
 
-  Serial.print("Sensor Map: ");
-  Serial.println(sensorValue);
+//  Serial.print("Sensor Map: ");
+//  Serial.println(sensorValue);
 
   // in case the sensor value is outside the range seen during calibration
-  sensorValue = constrain(sensorValue, 0, 255);
+//  sensorValue = constrain(sensorValue, 0, 255);
 
-  Serial.print("Sensor constrain: ");
-  Serial.println(sensorValue);
+//  Serial.print("Sensor constrain: ");
+//  Serial.println(sensorValue);
 
 //  delay(1000);
 
@@ -215,25 +232,34 @@ void loop() {
   // As well, if we comment out the shiftOut function call it also works ok.
   // TODO: END
 
-  for (int j = 0; j < 3; j++) {
-    //load the light sequence you want from array
-    dataRED = dataArrayRED[j];
-    dataORANGE = dataArrayORANGE[j];
-    dataYELLOW = dataArrayYELLOW[j];
-    dataGREEN = dataArrayGREEN[j];
-    //ground latchPin and hold low for as long as you are transmitting
-    digitalWrite(latchPin, 0);
-    //move 'em out
-    shiftOut(dataPin, clockPin, dataGREEN);
-    shiftOut(dataPin, clockPin, dataYELLOW);
-    shiftOut(dataPin, clockPin, dataORANGE);
-    shiftOut(dataPin, clockPin, dataRED);    
-    //return the latch pin high to signal chip that it 
-    //no longer needs to listen for information
-    digitalWrite(latchPin, 1);
-//    tone(7, melody[j], 300);
-    delay(400);
-  }
+//  for (int j = 0; j < 3; j++) {
+
+  int j = sensorValueStep;
+  
+    
+//    if(currentMillis - previousMillis >= interval) {
+      // save the last time you blinked the LED 
+      previousMillis = currentMillis;
+      
+      //load the light sequence you want from array
+      dataRED = dataArrayRED[j];
+      dataORANGE = dataArrayORANGE[j];
+      dataYELLOW = dataArrayYELLOW[j];
+      dataGREEN = dataArrayGREEN[j];
+      //ground latchPin and hold low for as long as you are transmitting
+      digitalWrite(latchPin, 0);
+      //move 'em out
+      shiftOut(dataPin, clockPin, dataGREEN);
+      shiftOut(dataPin, clockPin, dataYELLOW);
+      shiftOut(dataPin, clockPin, dataORANGE);
+      shiftOut(dataPin, clockPin, dataRED);    
+      //return the latch pin high to signal chip that it 
+      //no longer needs to listen for information
+      digitalWrite(latchPin, 1);
+      // tone(7, melody[j], 300);
+      // delay(400);
+//    }
+//  }
 
 //  audioHook(); // required here
 }
