@@ -116,13 +116,13 @@ void loop() {
   distance=ultrasonic.Ranging(CM);//get the current result;
 
   //  Added timer around the mapping to help with some flashing lights
-  if(currentMillis - previousMillis >= interval && distance <= 150) {
+  if(currentMillis - previousMillis >= interval && distance <= 250) {
     
     // save the last time you blinked the LED 
     previousMillis = currentMillis;  
 
-    distanceMap = map(distance, 3, 150, 0, 9);
-    distanceMap = constrain(distanceMap, 0, 9);
+    distanceMap = map(distance, 3, 250, 8, 0);
+    distanceMap = constrain(distanceMap, 0, 8);
     sensorValueStep8 = distanceMap;
 
 //    Serial.print("Sensor input: ");
@@ -138,6 +138,8 @@ void loop() {
     Serial.println("******************");
     Serial.print("the distance is ");
     Serial.println(distance);
+    Serial.print("the distance Map is ");
+    Serial.println(distanceMap);
     Serial.println("******************");
 
     digitalWrite(latchPin, 0);
