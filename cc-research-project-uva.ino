@@ -135,12 +135,14 @@ void loop() {
 //    Serial.println(sensorValueStep8);
 
     // Could print some stuff to the serial if i want
-    Serial.println("******************");
-    Serial.print("the distance is ");
-    Serial.println(distance);
-    Serial.print("the distance Map is ");
-    Serial.println(distanceMap);
-    Serial.println("******************");
+//    Serial.println("******************");
+//    Serial.print("the distance is ");
+//    Serial.println(distance);
+//    Serial.print("the distance Map is ");
+//    Serial.println(distanceMap);
+//    Serial.println("******************");
+
+    Serial.write(distance);
 
     digitalWrite(latchPin, 0);
   
