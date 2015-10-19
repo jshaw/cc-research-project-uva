@@ -49,7 +49,6 @@ int clockPin = 12;
 ////Pin connected to DS of 74HC595
 int dataPin = 11;
 
-
 //Bit Shift millis() timer
 // will store last time LED was updated
 unsigned long previousMillis = 0;
@@ -58,121 +57,10 @@ unsigned long previousMillis = 0;
 // interval at which to blink (milliseconds)
 const long interval = 400;
 
-//holders for infromation you're going to pass to shifting function
-byte dataRED;
-byte dataORANGE;
-byte dataYELLOW;
-byte dataGREEN;
-//byte dataArrayRED[15];
-//byte dataArrayORANGE[15];
-//byte dataArrayYELLOW[15];
-//byte dataArrayGREEN[15];
-byte dataArrayRED[3];
-byte dataArrayORANGE[3];
-byte dataArrayYELLOW[3];
-byte dataArrayGREEN[3];
-
 void setup() {
   //set pins to output because they are addressed in the main loop
   pinMode(latchPin, OUTPUT);
   Serial.begin(9600);
-
-  //Arduino doesn't seem to have a way to write binary straight into the code 
-  //so these values are in HEX.  Decimal would have been fine, too. 
-
-  dataArrayRED[0] = 0xFF; //11111111
-  dataArrayRED[1] = 0x0F; //00001111
-  dataArrayRED[2] = 0xF0; //11110000
-  dataArrayRED[3] = 0x00; //00000000
-
-  dataArrayORANGE[0] = 0xFF; //11111111
-  dataArrayORANGE[1] = 0x0F; //00001111
-  dataArrayORANGE[2] = 0xF0; //11110000
-  dataArrayORANGE[3] = 0x00; //00000000
-
-  dataArrayYELLOW[0] = 0xFF; //11111111
-  dataArrayYELLOW[1] = 0x0F; //00001111
-  dataArrayYELLOW[2] = 0xF0; //11110000
-  dataArrayYELLOW[3] = 0x00; //00000000
-
-  dataArrayGREEN[0] = 0xFF; //11111111
-  dataArrayGREEN[1] = 0x0F; //00001111
-  dataArrayGREEN[2] = 0xF0; //11110000
-  dataArrayGREEN[3] = 0x00; //00000000
-
-//  dataArrayRED[0] = 0xFF; //11111111
-//  dataArrayRED[1] = 0x7F; //01111111
-//  dataArrayRED[2] = 0x3F; //00111111
-//  dataArrayRED[3] = 0x1F; //00011111
-//  dataArrayRED[4] = 0x0F; //00001111
-//  dataArrayRED[5] = 0x07; //00000111
-//  dataArrayRED[6] = 0x03; //00000011
-//  dataArrayRED[7] = 0x01; //00000001
-//  dataArrayRED[8] = 0x00; //00000000
-//  dataArrayRED[9] = 0x01; //00000001
-//  dataArrayRED[10] = 0x03; //00000011
-//  dataArrayRED[11] = 0x07; //00000111
-//  dataArrayRED[12] = 0x0F; //00001111
-//  dataArrayRED[13] = 0x1F; //00011111
-//  dataArrayRED[14] = 0x3F; //00111111
-//  dataArrayRED[15] = 0x7F; //01111111
-
-  //Arduino doesn't seem to have a way to write binary straight into the code 
-  //so these values are in HEX.  Decimal would have been fine, too. 
-//  dataArrayORANGE[0] = 0xFF; //11111111
-//  dataArrayORANGE[1] = 0x7F; //01111111
-//  dataArrayORANGE[2] = 0x3F; //00111111
-//  dataArrayORANGE[3] = 0x1F; //00011111
-//  dataArrayORANGE[4] = 0x0F; //00001111
-//  dataArrayORANGE[5] = 0x07; //00000111
-//  dataArrayORANGE[6] = 0x03; //00000011
-//  dataArrayORANGE[7] = 0x01; //00000001
-//  dataArrayORANGE[8] = 0x00; //00000000
-//  dataArrayORANGE[9] = 0x01; //00000001
-//  dataArrayORANGE[10] = 0x03; //00000011
-//  dataArrayORANGE[11] = 0x07; //00000111
-//  dataArrayORANGE[12] = 0x0F; //00001111
-//  dataArrayORANGE[13] = 0x1F; //00011111
-//  dataArrayORANGE[14] = 0x3F; //00111111
-//  dataArrayORANGE[15] = 0x7F; //01111111
-
-  //Arduino doesn't seem to have a way to write binary straight into the code 
-  //so these values are in HEX.  Decimal would have been fine, too. 
-//  dataArrayYELLOW[0] = 0xFF; //11111111
-//  dataArrayYELLOW[1] = 0x7F; //01111111
-//  dataArrayYELLOW[2] = 0x3F; //00111111
-//  dataArrayYELLOW[3] = 0x1F; //00011111
-//  dataArrayYELLOW[4] = 0x0F; //00001111
-//  dataArrayYELLOW[5] = 0x07; //00000111
-//  dataArrayYELLOW[6] = 0x03; //00000011
-//  dataArrayYELLOW[7] = 0x01; //00000001
-//  dataArrayYELLOW[8] = 0x00; //00000000
-//  dataArrayYELLOW[9] = 0x01; //00000001
-//  dataArrayYELLOW[10] = 0x03; //00000011
-//  dataArrayYELLOW[11] = 0x07; //00000111
-//  dataArrayYELLOW[12] = 0x0F; //00001111
-//  dataArrayYELLOW[13] = 0x1F; //00011111
-//  dataArrayYELLOW[14] = 0x3F; //00111111
-//  dataArrayYELLOW[15] = 0x7F; //01111111
-
-    //Arduino doesn't seem to have a way to write binary straight into the code 
-  //so these values are in HEX.  Decimal would have been fine, too. 
-//  dataArrayGREEN[0] = 0xFF; //11111111
-//  dataArrayGREEN[1] = 0x7F; //01111111
-//  dataArrayGREEN[2] = 0x3F; //00111111
-//  dataArrayGREEN[3] = 0x1F; //00011111
-//  dataArrayGREEN[4] = 0x0F; //00001111
-//  dataArrayGREEN[5] = 0x07; //00000111
-//  dataArrayGREEN[6] = 0x03; //00000011
-//  dataArrayGREEN[7] = 0x01; //00000001
-//  dataArrayGREEN[8] = 0x00; //00000000
-//  dataArrayGREEN[9] = 0x01; //00000001
-//  dataArrayGREEN[10] = 0x03; //00000011
-//  dataArrayGREEN[11] = 0x07; //00000111
-//  dataArrayGREEN[12] = 0x0F; //00001111
-//  dataArrayGREEN[13] = 0x1F; //00011111
-//  dataArrayGREEN[14] = 0x3F; //00111111
-//  dataArrayGREEN[15] = 0x7F; //01111111
 
   //function that blinks all the LEDs
   //gets passed the number of blinks and the pause time
@@ -192,7 +80,6 @@ void setup() {
 //      sensorMin = sensorValue;
 //    }
 //  }
-
 
   //  Mozzi
 //  aSin.setFreq(440);
@@ -223,8 +110,15 @@ void loop() {
   Serial.print("Sensor Step 8: ");
   Serial.println(sensorValueStep8);
 
+  if(currentMillis - previousMillis >= interval) {
+    // save the last time you blinked the LED 
+    previousMillis = currentMillis;   
+    // Could print some stuff to the serial if i want
+  }
+
+
   digitalWrite(latchPin, 0);
-  
+
   if(sensorValueStep8 == 8) {
     shiftOut(dataPin, clockPin, 255);
     shiftOut(dataPin, clockPin, 255);
@@ -274,53 +168,8 @@ void loop() {
 
   digitalWrite(latchPin, 1);
 
-
-//  Serial.print("Sensor Map: ");
-//  Serial.println(sensorValue);
-
-  // in case the sensor value is outside the range seen during calibration
-//  sensorValue = constrain(sensorValue, 0, 255);
-
-//  Serial.print("Sensor constrain: ");
-//  Serial.println(sensorValue);
-
-//  delay(1000);
-
-  // TODO: There's something here that's weird that interferes with the Mozzi audio loops
-  //  If this for loop is commented out we are ok.
-  // As well, if we comment out the shiftOut function call it also works ok.
-  // TODO: END
-
-//  for (int j = 0; j < 3; j++) {
-
-//  int j = sensorValueStep;
-//  
-//    
-////    if(currentMillis - previousMillis >= interval) {
-//      // save the last time you blinked the LED 
-//      previousMillis = currentMillis;
-//      
-//      //load the light sequence you want from array
-//      dataRED = dataArrayRED[j];
-//      dataORANGE = dataArrayORANGE[j];
-//      dataYELLOW = dataArrayYELLOW[j];
-//      dataGREEN = dataArrayGREEN[j];
-//      //ground latchPin and hold low for as long as you are transmitting
-//      digitalWrite(latchPin, 0);
-//      //move 'em out
-//      shiftOut(dataPin, clockPin, dataGREEN);
-////      shiftOut(dataPin, clockPin, dataYELLOW);
-////      shiftOut(dataPin, clockPin, dataORANGE);
-////      shiftOut(dataPin, clockPin, dataRED);    
-//      //return the latch pin high to signal chip that it 
-//      //no longer needs to listen for information
-//      digitalWrite(latchPin, 1);
-      // tone(7, melody[j], 300);
-      // delay(400);
-//    }
-//  }
-
-//  audioHook(); // required here
+  // tone(7, melody[j], 300);
+  //  audioHook(); // required here
 }
 
 // the heart of the program
@@ -384,21 +233,6 @@ void blinkAll_2Bytes(int n, int d) {
   digitalWrite(latchPin, 1);
   delay(200);
 
-// Testing the first four / last four led flash
-//    digitalWrite(latchPin, 0);
-// First four on
-//    shiftOut(dataPin, clockPin, 15);
-//    shiftOut(dataPin, clockPin, 15);
-//    shiftOut(dataPin, clockPin, 15);
-//    shiftOut(dataPin, clockPin, 15);
-
-// Last four on
-//    shiftOut(dataPin, clockPin, 240);
-//    shiftOut(dataPin, clockPin, 240);
-//    shiftOut(dataPin, clockPin, 240);
-//    shiftOut(dataPin, clockPin, 240);
-//    digitalWrite(latchPin, 1);
-//    delay(d);
   for (int x = 0; x < n; x++) {
 //    digitalWrite(latchPin, 0);
 //    shiftOut(dataPin, clockPin, x);
