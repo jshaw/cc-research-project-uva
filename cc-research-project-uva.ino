@@ -11,26 +11,6 @@
 
 #include <Ultrasonic.h>
 
-////Adding Mozzi Includes
-//#include <MozziGuts.h>
-//#include <Oscil.h> // oscillator template
-//#include <tables/sin2048_int8.h> // sine table for oscillator
-//
-//// use: Oscil <table_size, update_rate> oscilName (wavetable), look in .h file of table #included above
-//Oscil <SIN2048_NUM_CELLS, AUDIO_RATE> aSin(SIN2048_DATA);
-//
-//const char INPUT_PIN = 0; // set the input for the knob to analog pin 0
-//
-//// to convey the volume level from updateControl() to updateAudio()
-//byte volume;
-
-//Ending Mozzi setup
-
-// notes in the melody:
-int melody[] = {
-  NOTE_B0, NOTE_C1, NOTE_CS1, NOTE_D1, NOTE_DS1, NOTE_E1, NOTE_F1, NOTE_FS1, NOTE_FS1, NOTE_F1, NOTE_E1, NOTE_DS1, NOTE_D1, NOTE_CS1, NOTE_C1, NOTE_B0
-};
-
 // Pin A0 Input for the potentiometer
 const int sensorPin = A0;    // pin that the sensor is attached to
 
@@ -89,12 +69,6 @@ void setup() {
 //      sensorMin = sensorValue;
 //    }
 //  }
-
-  //  Mozzi
-//  aSin.setFreq(440);
-//  aSin.setFreq(2093);
-
-//  startMozzi(); // :))
 }
 
 void loop() {
@@ -105,13 +79,13 @@ void loop() {
   sensorValue = analogRead(sensorPin);
 
   // group LED by chip
-  sensorValueStep = map(sensorValue, sensorMin, sensorMax, 0, 4);
-  sensorValueStep = constrain(sensorValueStep, 0, 4);
+//  sensorValueStep = map(sensorValue, sensorMin, sensorMax, 0, 4);
+//  sensorValueStep = constrain(sensorValueStep, 0, 4);
 
   // Potentiometer sensor input 
   // group LED by two sections per chip = total 8 sections plus off = 9
-  sensorValueStep8 = map(sensorValue, sensorMin, sensorMax, 0, 9);
-  sensorValueStep8 = constrain(sensorValueStep8, 0, 9);
+//  sensorValueStep8 = map(sensorValue, sensorMin, sensorMax, 0, 9);
+//  sensorValueStep8 = constrain(sensorValueStep8, 0, 9);
 
   distance=ultrasonic.Ranging(CM);//get the current result;
 
@@ -123,7 +97,7 @@ void loop() {
 
     distanceMap = map(distance, 3, 250, 8, 0);
     distanceMap = constrain(distanceMap, 0, 8);
-    sensorValueStep8 = distanceMap;
+//    sensorValueStep8 = distanceMap;
 
 //    Serial.print("Sensor input: ");
 //    Serial.println(sensorValue);
@@ -146,42 +120,42 @@ void loop() {
 
     digitalWrite(latchPin, 0);
   
-    if(sensorValueStep8 == 8) {
+    if(distanceMap == 8) {
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 7) {
+    } else if (distanceMap == 7) {
       shiftOut(dataPin, clockPin, 15);
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 6) {
+    } else if (distanceMap == 6) {
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 15);
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 5) {
+    } else if (distanceMap == 5) {
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 255);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 4) {
+    } else if (distanceMap == 4) {
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 15);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 3) {
+    } else if (distanceMap == 3) {
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 15);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 2) {
+    } else if (distanceMap == 2) {
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 255);
-    } else if (sensorValueStep8 == 1) {
+    } else if (distanceMap == 1) {
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
       shiftOut(dataPin, clockPin, 0);
@@ -195,9 +169,6 @@ void loop() {
   
     digitalWrite(latchPin, 1);
   }
-
-  // tone(7, melody[j], 300);
-  //  audioHook(); // required here
 }
 
 // the heart of the program
@@ -288,22 +259,4 @@ void blinkAll_2Bytes(int n, int d) {
     delay(d);
   }
 }
-
-
-//Mozzi Functions
-//void updateControl(){
-//  // read the variable resistor for volume
-//  int sensor_value = mozziAnalogRead(INPUT_PIN); // value is 0-1023
-//  
-//  // map it to an 8 bit range for efficient calculations in updateAudio
-//  volume = map(sensor_value, 0, 1023, 0, 255);  
-//  
-//  // print the value to the Serial monitor for debugging
-//  Serial.print("volume = ");
-//  Serial.println((int)volume);
-//}
-//
-//int updateAudio(){
-//  return ((int)aSin.next() * volume)>>8; // shift back into range after multiplying by 8 bit value
-//}
 
