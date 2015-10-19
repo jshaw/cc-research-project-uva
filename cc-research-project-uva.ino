@@ -250,9 +250,9 @@ void loop() {
       digitalWrite(latchPin, 0);
       //move 'em out
       shiftOut(dataPin, clockPin, dataGREEN);
-      shiftOut(dataPin, clockPin, dataYELLOW);
-      shiftOut(dataPin, clockPin, dataORANGE);
-      shiftOut(dataPin, clockPin, dataRED);    
+//      shiftOut(dataPin, clockPin, dataYELLOW);
+//      shiftOut(dataPin, clockPin, dataORANGE);
+//      shiftOut(dataPin, clockPin, dataRED);    
       //return the latch pin high to signal chip that it 
       //no longer needs to listen for information
       digitalWrite(latchPin, 1);
