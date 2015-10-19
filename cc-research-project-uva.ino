@@ -36,6 +36,7 @@ const int sensorPin = A0;    // pin that the sensor is attached to
 // variables:
 int sensorValue = 0;            // the sensor value
 int sensorValueStep = 0;        // the sensor value
+int sensorValueStep8 = 0;        // the sensor value
 //int sensorMin = 1023;         // minimum sensor value
 //int sensorMax = 0;            // maximum sensor value
 int sensorMin = 0;              // minimum sensor value
@@ -216,6 +217,64 @@ void loop() {
   Serial.print("Sensor Step: ");
   Serial.println(sensorValueStep);
 
+  sensorValueStep8 = map(sensorValue, sensorMin, sensorMax, 0, 9);
+  sensorValueStep8 = constrain(sensorValueStep8, 0, 9);
+  
+  Serial.print("Sensor Step 8: ");
+  Serial.println(sensorValueStep8);
+
+  digitalWrite(latchPin, 0);
+  
+  if(sensorValueStep8 == 8) {
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 7) {
+    shiftOut(dataPin, clockPin, 15);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 6) {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 15);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 5) {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 255);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 4) {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 15);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 3) {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 15);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 2) {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 255);
+  } else if (sensorValueStep8 == 1) {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 15);
+  } else {
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+    shiftOut(dataPin, clockPin, 0);
+  }
+
+  digitalWrite(latchPin, 1);
+
+
 //  Serial.print("Sensor Map: ");
 //  Serial.println(sensorValue);
 
@@ -234,28 +293,28 @@ void loop() {
 
 //  for (int j = 0; j < 3; j++) {
 
-  int j = sensorValueStep;
-  
-    
-//    if(currentMillis - previousMillis >= interval) {
-      // save the last time you blinked the LED 
-      previousMillis = currentMillis;
-      
-      //load the light sequence you want from array
-      dataRED = dataArrayRED[j];
-      dataORANGE = dataArrayORANGE[j];
-      dataYELLOW = dataArrayYELLOW[j];
-      dataGREEN = dataArrayGREEN[j];
-      //ground latchPin and hold low for as long as you are transmitting
-      digitalWrite(latchPin, 0);
-      //move 'em out
-      shiftOut(dataPin, clockPin, dataGREEN);
-//      shiftOut(dataPin, clockPin, dataYELLOW);
-//      shiftOut(dataPin, clockPin, dataORANGE);
-//      shiftOut(dataPin, clockPin, dataRED);    
-      //return the latch pin high to signal chip that it 
-      //no longer needs to listen for information
-      digitalWrite(latchPin, 1);
+//  int j = sensorValueStep;
+//  
+//    
+////    if(currentMillis - previousMillis >= interval) {
+//      // save the last time you blinked the LED 
+//      previousMillis = currentMillis;
+//      
+//      //load the light sequence you want from array
+//      dataRED = dataArrayRED[j];
+//      dataORANGE = dataArrayORANGE[j];
+//      dataYELLOW = dataArrayYELLOW[j];
+//      dataGREEN = dataArrayGREEN[j];
+//      //ground latchPin and hold low for as long as you are transmitting
+//      digitalWrite(latchPin, 0);
+//      //move 'em out
+//      shiftOut(dataPin, clockPin, dataGREEN);
+////      shiftOut(dataPin, clockPin, dataYELLOW);
+////      shiftOut(dataPin, clockPin, dataORANGE);
+////      shiftOut(dataPin, clockPin, dataRED);    
+//      //return the latch pin high to signal chip that it 
+//      //no longer needs to listen for information
+//      digitalWrite(latchPin, 1);
       // tone(7, melody[j], 300);
       // delay(400);
 //    }
