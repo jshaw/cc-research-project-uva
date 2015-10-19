@@ -9,6 +9,7 @@
 
 #include "pitches.h"
 
+#include <Ultrasonic.h>
 
 ////Adding Mozzi Includes
 //#include <MozziGuts.h>
@@ -33,6 +34,14 @@ int melody[] = {
 // Pin A0 Input for the potentiometer
 const int sensorPin = A0;    // pin that the sensor is attached to
 
+// Trig = 4
+// Echo = 7
+
+//Init an Ultrasonic object
+Ultrasonic ultrasonic(7, 4);
+int distance = 0;
+int distanceMap = 0;
+
 // variables:
 int sensorValue = 0;            // the sensor value
 int sensorValueStep = 0;        // the sensor value
@@ -55,7 +64,7 @@ unsigned long previousMillis = 0;
 
 // constants won't change :
 // interval at which to blink (milliseconds)
-const long interval = 400;
+const long interval = 500;
 
 void setup() {
   //set pins to output because they are addressed in the main loop
@@ -95,78 +104,93 @@ void loop() {
   // read the sensor:
   sensorValue = analogRead(sensorPin);
 
-  Serial.print("Sensor input: ");
-  Serial.println(sensorValue);
-
+  // group LED by chip
   sensorValueStep = map(sensorValue, sensorMin, sensorMax, 0, 4);
   sensorValueStep = constrain(sensorValueStep, 0, 4);
-  
-  Serial.print("Sensor Step: ");
-  Serial.println(sensorValueStep);
 
+  // Potentiometer sensor input 
+  // group LED by two sections per chip = total 8 sections plus off = 9
   sensorValueStep8 = map(sensorValue, sensorMin, sensorMax, 0, 9);
   sensorValueStep8 = constrain(sensorValueStep8, 0, 9);
-  
-  Serial.print("Sensor Step 8: ");
-  Serial.println(sensorValueStep8);
 
-  if(currentMillis - previousMillis >= interval) {
+  distance=ultrasonic.Ranging(CM);//get the current result;
+
+  //  Added timer around the mapping to help with some flashing lights
+  if(currentMillis - previousMillis >= interval && distance <= 150) {
+    
     // save the last time you blinked the LED 
-    previousMillis = currentMillis;   
+    previousMillis = currentMillis;  
+
+    distanceMap = map(distance, 3, 150, 0, 9);
+    distanceMap = constrain(distanceMap, 0, 9);
+    sensorValueStep8 = distanceMap;
+
+//    Serial.print("Sensor input: ");
+//    Serial.println(sensorValue);
+//
+//    Serial.print("Sensor Step: ");
+//    Serial.println(sensorValueStep);
+//
+//    Serial.print("Sensor Step 8: ");
+//    Serial.println(sensorValueStep8);
+
     // Could print some stuff to the serial if i want
+    Serial.println("******************");
+    Serial.print("the distance is ");
+    Serial.println(distance);
+    Serial.println("******************");
+
+    digitalWrite(latchPin, 0);
+  
+    if(sensorValueStep8 == 8) {
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 7) {
+      shiftOut(dataPin, clockPin, 15);
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 6) {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 15);
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 5) {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 255);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 4) {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 15);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 3) {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 15);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 2) {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 255);
+    } else if (sensorValueStep8 == 1) {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 15);
+    } else {
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+      shiftOut(dataPin, clockPin, 0);
+    }
+  
+    digitalWrite(latchPin, 1);
   }
-
-
-  digitalWrite(latchPin, 0);
-
-  if(sensorValueStep8 == 8) {
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 7) {
-    shiftOut(dataPin, clockPin, 15);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 6) {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 15);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 5) {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 255);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 4) {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 15);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 3) {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 15);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 2) {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 255);
-  } else if (sensorValueStep8 == 1) {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 15);
-  } else {
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-    shiftOut(dataPin, clockPin, 0);
-  }
-
-  digitalWrite(latchPin, 1);
 
   // tone(7, melody[j], 300);
   //  audioHook(); // required here
